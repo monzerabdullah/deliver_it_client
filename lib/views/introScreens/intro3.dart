@@ -18,11 +18,11 @@ class IntroScreen3 extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
-            'images/svgs/support.svg',
+            'images/svgs/supportBalt.svg',
             width: 299,
           ),
           const SizedBox(
-            height: 160,
+            height: 80,
           ),
           const Text(
             'دعم متوفر كل الوقت',

@@ -34,7 +34,7 @@ class _SignUpOnBoardingState extends State<SignUpOnBoarding> {
 
       _pageController.animateToPage(
         _currentPage,
-        duration: const Duration(seconds: 5),
+        duration: const Duration(seconds: 3),
         curve: Curves.ease,
       );
     });

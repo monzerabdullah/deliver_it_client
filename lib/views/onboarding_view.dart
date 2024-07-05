@@ -25,7 +25,7 @@ class _SignUpOnBoardingState extends State<SignUpOnBoarding> {
   void initState() {
     super.initState();
 
-    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPage < 2) {
         _currentPage++;
       } else {

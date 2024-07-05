@@ -16,141 +16,147 @@ class LoginView extends StatelessWidget {
               horizontal: 20,
               vertical: 35,
             ),
-            child: Column(
-              children: [
-                const Row(
-                  textDirection: TextDirection.rtl,
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).size.height * 0.15,
+                ),
+                child: Column(
                   children: [
-                    Text(
-                      'أهلا بك',
-                      style: TextStyle(
-                        color: kPrimaryText,
-                        fontSize: 32.0,
-                        fontFamily: 'Cairo',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                const Row(
-                  textDirection: TextDirection.rtl,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'قم بتسجيل الدخول ، هنالك كثير من الطلبات بإنتظارك لإيصالها!!',
-                        style: TextStyle(
-                          color: kSecondaryText,
-                          fontSize: 16.0,
-                          fontFamily: 'Cairo',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 64,
-                ),
-                const TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'الإسم',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: kSecondaryText,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                const TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'كلمة السر',
-                    labelStyle: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: kSecondaryText,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                const Row(
-                  textDirection: TextDirection.rtl,
-                  children: [
-                    Text(
-                      'هل نسيت كلمة السر؟',
-                      style: TextStyle(
-                        color: kSecondaryText,
-                        fontSize: 16.0,
-                        fontFamily: 'Cairo',
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 64,
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
-                    textStyle: const TextStyle(
-                      fontSize: 20.0,
-                      fontFamily: 'Cairo',
-                      fontWeight: FontWeight.w600,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 22,
-                      vertical: 16,
-                    ),
-                    minimumSize: const Size.fromHeight(60),
-                  ),
-                  child: const Text(
-                    'تسجيل دخول',
-                  ),
-                ),
-                const SizedBox(
-                  height: 24,
-                ),
-                Row(
-                  textDirection: TextDirection.rtl,
-                  children: [
-                    const Text(
-                      'هل تريد الإنضمام إلينا ؟',
-                      style: TextStyle(
-                        color: kSecondaryText,
-                        fontSize: 16.0,
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SignUpOnBoarding(),
+                    const Row(
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        Text(
+                          'أهلا بك',
+                          style: TextStyle(
+                            color: kPrimaryText,
+                            fontSize: 32.0,
+                            fontFamily: 'Cairo',
                           ),
-                        );
-                      },
-                      child: const Text(
-                        'أنشئ حساب',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: kPrimary,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    const Row(
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'قم بتسجيل الدخول ، هنالك كثير من الطلبات بإنتظارك لإيصالها!!',
+                            style: TextStyle(
+                              color: kSecondaryText,
+                              fontSize: 16.0,
+                              fontFamily: 'Cairo',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 64,
+                    ),
+                    const TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'الإسم',
+                        labelStyle: TextStyle(
                           fontFamily: 'Cairo',
-                          fontWeight: FontWeight.w700,
+                          color: kSecondaryText,
                         ),
                       ),
-                    )
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    const TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'كلمة السر',
+                        labelStyle: TextStyle(
+                          fontFamily: 'Cairo',
+                          color: kSecondaryText,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    const Row(
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        Text(
+                          'نسيت كلمة السر؟',
+                          style: TextStyle(
+                            color: kSecondaryText,
+                            fontSize: 16.0,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kPrimary,
+                        textStyle: const TextStyle(
+                          fontSize: 20.0,
+                          fontFamily: 'Cairo',
+                          fontWeight: FontWeight.w600,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 16,
+                        ),
+                        minimumSize: const Size.fromHeight(60),
+                      ),
+                      child: const Text(
+                        'تسجيل دخول',
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Row(
+                      textDirection: TextDirection.rtl,
+                      children: [
+                        const Text(
+                          'هل تريد الإنضمام إلينا ؟',
+                          style: TextStyle(
+                            color: kSecondaryText,
+                            fontSize: 16.0,
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpOnBoarding(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'أنشئ حساب',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: kPrimary,
+                              fontFamily: 'Cairo',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ),

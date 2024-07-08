@@ -11,23 +11,6 @@ class Home extends StatelessWidget {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.menu,
-              color: kPrimaryText,
-            ),
-          ),
-          backgroundColor: Colors.grey[100],
-          title: const Text(
-            'الرئيسية',
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              color: kPrimaryText,
-            ),
-          ),
-        ),
         body: const Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

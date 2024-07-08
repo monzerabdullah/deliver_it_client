@@ -1,5 +1,6 @@
 import 'package:deliver_it_client/constants.dart';
 import 'package:deliver_it_client/views/login_view.dart';
+import 'package:deliver_it_client/views/otp_view.dart';
 import 'package:flutter/material.dart';
 
 class SignUpView extends StatelessWidget {
@@ -98,7 +99,13 @@ class SignUpView extends StatelessWidget {
                     ),
                     const Spacer(),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const OtpConfirmation(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimary,
                         textStyle: const TextStyle(

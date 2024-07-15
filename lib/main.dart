@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
               });
             },
             selectedIndex: currentIndex,
-            indicatorColor: kPrimary,
             destinations: const [
               NavigationDestination(
                 icon: Icon(
@@ -63,10 +62,10 @@ class _MyAppState extends State<MyApp> {
           titleTextStyle: TextStyle(
             fontFamily: 'Cairo',
             fontSize: 20.0,
-            color: kPrimaryText,
+            color: kPrimary,
           ),
           iconTheme: IconThemeData(
-            color: kPrimaryText,
+            color: kPrimary,
           ),
         ),
         inputDecorationTheme: const InputDecorationTheme(
@@ -75,10 +74,20 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         textSelectionTheme: const TextSelectionThemeData(cursorColor: kPrimary),
-        navigationBarTheme: const NavigationBarThemeData(
-          labelTextStyle: MaterialStatePropertyAll(
+        navigationBarTheme: NavigationBarThemeData(
+          indicatorColor: kPrimaryText.withOpacity(.5),
+          backgroundColor: kPrimary,
+          iconTheme: const MaterialStatePropertyAll(
+            IconThemeData(
+              color: kWhite,
+            ),
+          ),
+          labelTextStyle: const MaterialStatePropertyAll(
             TextStyle(
               fontFamily: 'Cairo',
+              color: kWhite,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

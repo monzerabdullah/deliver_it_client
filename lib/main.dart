@@ -75,7 +75,7 @@ class _MyAppState extends State<MyApp> {
         ),
         textSelectionTheme: const TextSelectionThemeData(cursorColor: kPrimary),
         navigationBarTheme: NavigationBarThemeData(
-          indicatorColor: kPrimaryText.withOpacity(.5),
+          indicatorColor: kPrimaryText.withOpacity(.3),
           backgroundColor: kPrimary,
           iconTheme: const MaterialStatePropertyAll(
             IconThemeData(

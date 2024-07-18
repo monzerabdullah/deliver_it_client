@@ -98,7 +98,7 @@ class _SignUpOnBoardingState extends State<SignUpOnBoarding> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SignUpView(),
+                          builder: (context) => SignUpView(),
                         ),
                       );
                     },
@@ -140,7 +140,7 @@ class _SignUpOnBoardingState extends State<SignUpOnBoarding> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LoginView(),
+                              builder: (context) => LoginView(),
                             ),
                           );
                         },

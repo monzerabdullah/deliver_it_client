@@ -26,7 +26,8 @@ class AuthenticationService extends ChangeNotifier {
           email: email, password: password);
       return authResult.user != null;
     } catch (e) {
-      return e.toString();
+      // return e.toString();
+      print(e.toString());
     }
   }
 

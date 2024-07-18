@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:deliver_it_client/constants.dart';
 
 class OrderButton extends StatefulWidget {
-  const OrderButton({super.key});
+  OrderButton({super.key, this.onTap});
+  Function()? onTap;
 
   @override
   State<OrderButton> createState() => _OrderButtonState();
@@ -26,7 +27,7 @@ class _OrderButtonState extends State<OrderButton> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _toggleStatus,
+      onTap: widget.onTap,
       child: Column(
         children: [
           Stack(

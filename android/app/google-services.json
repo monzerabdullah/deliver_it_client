@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "849818301615",
-    "project_id": "deliver-it-a6f41",
-    "storage_bucket": "deliver-it-a6f41.appspot.com"
+    "project_number": "45923938727",
+    "project_id": "deliverit-8aa86",
+    "storage_bucket": "deliverit-8aa86.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:849818301615:android:94e79ad2fd9368f315105a",
+        "mobilesdk_app_id": "1:45923938727:android:cf0c239fe47566b81b0682",
         "android_client_info": {
-          "package_name": "com.example.deliver_it_client"
+          "package_name": "com.deliverit.deliver_it_captin"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyConm5d9aAlAkT3ZOcSi5r2CEGCyoy6z5k"
+          "current_key": "AIzaSyBZLjZAmOpw4P_K9uZMMJu_z7Ulyp6mm-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:45923938727:android:b5fff175b207fe7e1b0682",
+        "android_client_info": {
+          "package_name": "com.example.deliveritcaptin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZLjZAmOpw4P_K9uZMMJu_z7Ulyp6mm-4"
         }
       ],
       "services": {

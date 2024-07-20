@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:deliver_it_client/constants.dart';
 
 class OrderButton extends StatefulWidget {
-  OrderButton({super.key, this.onTap});
+  OrderButton({super.key, this.onTap, this.buttonColor});
   Function()? onTap;
+  Color? buttonColor;
 
   @override
   State<OrderButton> createState() => _OrderButtonState();
@@ -36,11 +37,7 @@ class _OrderButtonState extends State<OrderButton> {
               AnimatedContainer(
                 duration: const Duration(seconds: 5),
                 decoration: BoxDecoration(
-                  color: orderStatus == 0
-                      ? const Color(0xFF7F7F7F)
-                      : orderStatus == 1
-                          ? kPrimary
-                          : kSecondary,
+                  color: widget.buttonColor,
                   borderRadius: BorderRadius.circular(224 / 2),
                   boxShadow: kElevationToShadow[3],
                 ),
@@ -91,7 +88,7 @@ class _OrderButtonState extends State<OrderButton> {
                   ),
                 ),
                 TextSpan(
-                  text: ' مطولا ',
+                  text: ' مرة أخرى ',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     color: kPrimary,

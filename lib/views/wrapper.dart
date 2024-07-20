@@ -1,4 +1,5 @@
 import 'package:deliver_it_client/locator.dart';
+import 'package:deliver_it_client/main.dart';
 import 'package:deliver_it_client/services/authentication_service.dart';
 import 'package:deliver_it_client/views/authenticate.dart';
 import 'package:deliver_it_client/views/home_view.dart';

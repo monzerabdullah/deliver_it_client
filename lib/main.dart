@@ -72,6 +72,7 @@ class _ClientViewState extends State<ClientView> {
         ),
       ),
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.grey.shade100,
         appBarTheme: const AppBarTheme(
           titleTextStyle: TextStyle(
             fontFamily: 'Cairo',

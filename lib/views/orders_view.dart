@@ -165,7 +165,7 @@ class OrdersItem extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: null,
+                    backgroundColor: kWhite,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
                       side: const BorderSide(

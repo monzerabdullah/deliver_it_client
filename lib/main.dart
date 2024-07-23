@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deliver_it_client/constants.dart';
 import 'package:deliver_it_client/locator.dart';
 import 'package:deliver_it_client/services/authentication_service.dart';
@@ -39,6 +40,8 @@ class ClientView extends StatefulWidget {
 
 class _ClientViewState extends State<ClientView> {
   int currentIndex = 0;
+  var user = FirebaseAuth.instance.currentUser;
+  int readyTostartOrders = 0;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,38 +49,53 @@ class _ClientViewState extends State<ClientView> {
       debugShowCheckedModeBanner: false,
       home: Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 4.0,
-            backgroundColor: kWhite,
-            title: const Text(
-              'الرئيسية',
-            ),
-          ),
-          body: [const Home(), const MyOrders()][currentIndex],
-          bottomNavigationBar: NavigationBar(
-            onDestinationSelected: (index) {
-              setState(() {
-                currentIndex = index;
-              });
-            },
-            selectedIndex: currentIndex,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(
-                  Icons.add_circle_outline,
+        child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection('orders')
+                .where('store_id', isEqualTo: user?.uid)
+                .where('status', isEqualTo: 'ready_to_start')
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                readyTostartOrders = snapshot.data!.docs.length;
+              }
+              return Scaffold(
+                appBar: AppBar(
+                  elevation: 4.0,
+                  backgroundColor: kWhite,
+                  title: const Text(
+                    'الرئيسية',
+                  ),
                 ),
-                selectedIcon: Icon(Icons.add_circle),
-                label: 'طلبية جديدة',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.list_alt),
-                label: 'طلباتي',
-              ),
-            ],
-          ),
-          drawer: const NavDrawer(),
-        ),
+                body: [const Home(), const MyOrders()][currentIndex],
+                bottomNavigationBar: NavigationBar(
+                  onDestinationSelected: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                  },
+                  selectedIndex: currentIndex,
+                  destinations: [
+                    const NavigationDestination(
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                      ),
+                      selectedIcon: Icon(Icons.add_circle),
+                      label: 'طلبية جديدة',
+                    ),
+                    NavigationDestination(
+                      icon: Badge(
+                        label: Text('$readyTostartOrders'),
+                        isLabelVisible: readyTostartOrders > 0,
+                        child: const Icon(Icons.list_alt),
+                      ),
+                      label: 'طلباتي',
+                    ),
+                  ],
+                ),
+                drawer: const NavDrawer(),
+              );
+            }),
       ),
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.grey.shade100,

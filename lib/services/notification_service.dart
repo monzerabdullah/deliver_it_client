@@ -1,4 +1,5 @@
-import 'package:deliver_it_client/views/traget_dart';
+import 'package:deliver_it_client/views/home_view.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,9 +34,13 @@ class NotificationService {
     // Handle notification tap
     if (response.payload != null) {
       // Navigate to TargetPage or any other page
+      // print(response.payload);
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-            builder: (context) => TargetPage(payload: response.payload!)),
+          builder: (context) => StoreReviewTripScreen(
+            payload: response.payload!,
+          ),
+        ),
       );
     }
   }

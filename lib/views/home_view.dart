@@ -27,11 +27,11 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     _notificationService = NotificationService();
+    // _notificationService.listenToFirestoreDocument('orders');
   }
 
   @override
   Widget build(BuildContext context) {
-    _notificationService.listenToFirestoreDocument('orders');
     final user = FirebaseAuth.instance.currentUser;
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -405,46 +405,119 @@ class AcceptedOrderCard extends StatelessWidget {
 }
 
 class StoreReviewTripScreen extends StatelessWidget {
-  final String orderId;
-
-  StoreReviewTripScreen({super.key, required this.orderId});
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  void _confirmTrip() async {
-    await _firestore.collection('orders').doc(orderId).update({
-      'status': 'delivering',
-    });
-  }
-
+  StoreReviewTripScreen({super.key, required this.payload});
+  String payload;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Review Trip Details'),
-      ),
-      body: FutureBuilder(
-        future: _firestore.collection('orders').doc(orderId).get(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const CircularProgressIndicator();
-          var order = snapshot.data;
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Pickup Location: ${order!['pickup_location']}'),
-                Text('Delivery Location: ${order['delivery_location']}'),
-                Image.network(order['receipt_image'] ?? 'default_image_url'),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _confirmTrip,
-                  child: const Text('Confirm Trip'),
-                ),
-              ],
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 30,
             ),
-          );
-        },
+            child: Center(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  const CircleAvatar(
+                    radius: 60,
+                    backgroundImage: AssetImage('images/imgs/e.jpg'),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    'تم التوصيل!!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: kPrimaryText,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.star_outline,
+                        size: 42,
+                        color: Colors.yellow,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Icon(
+                        Icons.star,
+                        size: 42,
+                        color: Colors.yellow,
+                      ),
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.star,
+                        size: 42,
+                        color: Colors.yellow,
+                      ),
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.star,
+                        size: 42,
+                        color: Colors.yellow,
+                      ),
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.star,
+                        size: 42,
+                        color: Colors.yellow,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'قم بتقييم تجرتك مع هذا المندوب ، ما الذي أعجبك ، ما الذي بجب تحسينه والإهتمام به',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 16,
+                      color: kSecondaryText,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      //show dialog here
+                    },
+                    child: const Text(
+                      'أكتب تقيما',
+                      style: TextStyle(fontFamily: 'Cairo'),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'لا أريد',
+                      style: TextStyle(fontFamily: 'Cairo'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

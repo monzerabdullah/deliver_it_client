@@ -1,45 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deliver_it_client/constants.dart';
 import 'package:deliver_it_client/views/details_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:deliver_it_client/views/tabs/accepted_view.dart';
+import 'package:deliver_it_client/views/tabs/all_view.dart';
+import 'package:deliver_it_client/views/tabs/canceled_view.dart';
+import 'package:deliver_it_client/views/tabs/delivered_view.dart';
+import 'package:deliver_it_client/views/tabs/delivering_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
 
 class MyOrders extends StatelessWidget {
   const MyOrders({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('store_id', isEqualTo: user?.uid)
-          .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: SvgPicture.asset('images/svgs/history.svg'),
-          );
-        }
-        final orders = snapshot.data!.docs;
-        return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 15,
-            vertical: 20,
+    return DefaultTabController(
+      length: 5,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: kWhite,
+          toolbarHeight: 10,
+          bottom: const TabBar(
+            indicatorColor: kPrimary,
+            tabs: [
+              Tab(
+                child: Text('الكل'),
+              ),
+              Tab(
+                child: Text('تم القبول'),
+              ),
+              Tab(
+                child: Text('جاري'),
+              ),
+              Tab(
+                child: Text('وصلت'),
+              ),
+              Tab(
+                child: Text('ملغية'),
+              ),
+            ],
           ),
-          child: ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return OrdersItem(
-                orderId: order.id,
-              );
-            },
-          ),
-        );
-      },
+        ),
+        body: const TabBarView(
+          children: [
+            AllOrders(),
+            AcceptedOrders(),
+            DeliveringOrders(),
+            DeliveredOrders(),
+            CanceledOrders(),
+          ],
+        ),
+      ),
     );
   }
 }

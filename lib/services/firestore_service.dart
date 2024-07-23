@@ -29,6 +29,7 @@ class FirestoreService {
         'rider_id': null,
         'status': 'pending',
         'order_details': '',
+        'visibility': 'public',
         'created_at': FieldValue.serverTimestamp(),
       });
     }

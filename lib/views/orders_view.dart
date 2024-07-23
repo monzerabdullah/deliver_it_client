@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deliver_it_client/constants.dart';
+import 'package:deliver_it_client/views/details_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MyOrders extends StatelessWidget {
   const MyOrders({super.key});
@@ -9,184 +12,255 @@ class MyOrders extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    // return StreamBuilder(
-    //   stream: FirebaseFirestore.instance
-    //       .collection('orders')
-    //       .where('store_id', isEqualTo: user?.uid)
-    //       .where('status', isEqualTo: 'accepted')
-    //       .snapshots(),
-    //   builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    //     // Check if snapshot has data
-    //     if (!snapshot.hasData) {
-    //       return const SliverToBoxAdapter(
-    //         child: Column(
-    //           children: [
-    //             Text(
-    //               'لا توجد طلبات حتى الان',
-    //               style: TextStyle(
-    //                 fontFamily: 'Cairo',
-    //                 fontSize: 16,
-    //                 color: kPrimaryText,
-    //               ),
-    //             ),
-    //             SizedBox(
-    //               height: 40,
-    //             )
-    //           ],
-    //         ),
-    //       );
-    //     }
-
-    //     final orders = snapshot.data!.docs;
-
-    //     // Check if there are no orders
-    //     if (orders.isEmpty) {
-    //       return const SliverToBoxAdapter(
-    //         child: Column(
-    //           children: [
-    //             Text(
-    //               'لا توجد طلبات حتى الان',
-    //               style: TextStyle(
-    //                 fontFamily: 'Cairo',
-    //                 color: kPrimaryText,
-    //                 fontSize: 16,
-    //               ),
-    //             ),
-    //             SizedBox(
-    //               height: 40,
-    //             )
-    //           ],
-    //         ),
-    //       );
-    //     }
-    //   },
-    // );
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 20,
-      ),
-      child: ListView(
-        children: const [
-          OrdersItem(),
-          OrdersItem(),
-          OrdersItem(),
-          OrdersItem(),
-          OrdersItem(),
-          OrdersItem(),
-        ],
-      ),
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('orders')
+          .where('store_id', isEqualTo: user?.uid)
+          .snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: SvgPicture.asset('images/svgs/history.svg'),
+          );
+        }
+        final orders = snapshot.data!.docs;
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 20,
+          ),
+          child: ListView.builder(
+            itemCount: orders.length,
+            itemBuilder: (context, index) {
+              final order = orders[index];
+              return OrdersItem(
+                orderId: order.id,
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }
 
 class OrdersItem extends StatelessWidget {
-  const OrdersItem({super.key});
+  OrdersItem({super.key, required this.orderId});
+  final String orderId;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String chaipLabel(String orderStatus) {
+    if (orderStatus == 'pending') {
+      return 'في إنتظار القبول';
+    } else if (orderStatus == 'accepted') {
+      return 'تم القبول';
+    } else if (orderStatus == 'ready_to_start') {
+      return 'جاهز للتوصيل';
+    } else if (orderStatus == 'delivering') {
+      return 'جاري للتوصيل';
+    } else if (orderStatus == 'canceled') {
+      return 'ملغية';
+    } else if (orderStatus == 'delivered') {
+      return 'تم التوصيل';
+    } else {
+      return 'غير محدد';
+    }
+  }
+
+  WidgetStatePropertyAll<Color?> chipColor(String orderStatus) {
+    if (orderStatus == 'pending') {
+      return const WidgetStatePropertyAll(kPrimary);
+    } else if (orderStatus == 'accepted') {
+      return const WidgetStatePropertyAll(kSecondary);
+    } else if (orderStatus == 'ready_to_start') {
+      return const WidgetStatePropertyAll(kSecondary);
+    } else if (orderStatus == 'delivering') {
+      return const WidgetStatePropertyAll(kSecondary);
+    } else if (orderStatus == 'delivered') {
+      return const WidgetStatePropertyAll(kSecondary);
+    } else if (orderStatus == 'canceled') {
+      return const WidgetStatePropertyAll(kRed);
+    } else {
+      return const WidgetStatePropertyAll(kPrimary);
+    }
+  }
+
+  void _confirmTrip(String orderId) async {
+    await _firestore.collection('orders').doc(orderId).update({
+      'status': 'delivering',
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: kWhite,
-      elevation: 2.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Chip(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(
-                      width: 0,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  color: const WidgetStatePropertyAll(kPrimary),
-                  label: const Text(
-                    'جاري التوصيل',
-                    style: TextStyle(
-                      color: kWhite,
-                      fontFamily: 'Cairo',
-                    ),
-                  ),
-                ),
-                const Text(
-                  '#44521',
-                  style: TextStyle(
-                    color: kPrimaryText,
-                    fontFamily: 'Cairo',
-                  ),
-                ),
-              ],
+    return StreamBuilder<DocumentSnapshot>(
+        stream: _firestore.collection('orders').doc(orderId).snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+
+          final order = snapshot.data!;
+          return Card(
+            color: kWhite,
+            elevation: 2.0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
             ),
-            const Divider(),
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(child: LocationSide()),
-                Expanded(
-                  child: Icon(
-                    Icons.arrow_forward,
-                    size: 32,
-                    color: kPrimaryText,
-                  ),
-                ),
-                Expanded(child: LocationSide()),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  child: const Text(
-                    'تأكيد',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: kWhite,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kWhite,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                      side: const BorderSide(
-                        color: kPrimary,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Chip(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            width: 0,
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        color: chipColor(order.get('status')),
+                        label: Text(
+                          chaipLabel(order.get('status')),
+                          style: const TextStyle(
+                            color: kWhite,
+                            fontFamily: 'Cairo',
+                          ),
+                        ),
                       ),
-                    ),
+                      Text(
+                        order.id,
+                        style: const TextStyle(
+                          color: kPrimaryText,
+                          fontFamily: 'Cairo',
+                        ),
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'التفاصيل',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      color: kPrimary,
-                    ),
+                  const Divider(),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(child: LocationSide()),
+                      Expanded(
+                        child: Icon(
+                          Icons.arrow_forward,
+                          size: 32,
+                          color: kPrimaryText,
+                        ),
+                      ),
+                      Expanded(child: LocationSide()),
+                    ],
                   ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (order['status'] != 'ready_to_start') ...[
+                        const Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundImage: AssetImage(
+                                'images/imgs/e.jpg',
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'مزمل بشرى',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: kPrimary,
+                              child: Icon(
+                                Icons.call,
+                                color: kWhite,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            CircleAvatar(
+                              radius: 25,
+                              backgroundColor: kPrimary,
+                              child: Icon(
+                                Icons.location_pin,
+                                color: kWhite,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ] else ...[
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigator.of(context).push(
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         DetailsView(orderId: order.id),
+                            //   ),
+                            // );
+                            _confirmTrip(order.id);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kPrimary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                          child: const Text(
+                            'تأكيد',
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              color: kWhite,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DetailsView(orderId: order.id),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kWhite,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                              side: const BorderSide(
+                                color: kPrimary,
+                              ),
+                            ),
+                          ),
+                          child: const Text(
+                            'التفاصيل',
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              color: kPrimary,
+                            ),
+                          ),
+                        ),
+                      ]
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 }
 

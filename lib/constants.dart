@@ -8,3 +8,5 @@ const kPrimary = Color(0xFF0192ff);
 const kPrimaryText = Color(0xFF0F153F);
 
 const kSecondaryText = Color(0xFF9C9FB7);
+
+const kRed = Color(0xFFFC4850);

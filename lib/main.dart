@@ -1,13 +1,14 @@
 import 'package:deliver_it_client/constants.dart';
 import 'package:deliver_it_client/locator.dart';
 import 'package:deliver_it_client/services/authentication_service.dart';
+import 'package:deliver_it_client/services/notification_service.dart';
 import 'package:deliver_it_client/views/authenticate.dart';
 import 'package:deliver_it_client/views/home_view.dart';
-import 'package:deliver_it_client/views/login_view.dart';
+
 import 'package:deliver_it_client/views/orders_view.dart';
-import 'package:deliver_it_client/views/wrapper.dart';
 import 'package:deliver_it_client/widgets/nav_drawer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,15 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   setupLocator();
   runApp(const MyApp());
+}
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
 }
 
 class ClientView extends StatefulWidget {
@@ -119,8 +127,9 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User?>.value(
       initialData: null,
       value: AuthenticationService().user,
-      child: const MaterialApp(
-        home: Wrapper(),
+      child: MaterialApp(
+        navigatorKey: navigatorKey,
+        home: const Wrapper(),
       ),
     );
   }

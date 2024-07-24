@@ -9,6 +9,7 @@ import 'package:deliver_it_client/views/tabs/canceled_view.dart';
 import 'package:deliver_it_client/views/tabs/delivered_view.dart';
 import 'package:deliver_it_client/views/tabs/delivering_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class MyOrders extends StatelessWidget {
   const MyOrders({super.key});
@@ -149,55 +150,50 @@ class OrdersItem extends StatelessWidget {
                     ],
                   ),
                   const Divider(),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(child: LocationSide()),
-                      Expanded(
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 32,
-                          color: kPrimaryText,
-                        ),
-                      ),
-                      Expanded(child: LocationSide()),
-                    ],
+                  TripPath(
+                    orderId: order.id,
                   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      if (order['status'] != 'ready_to_start') ...[
-                        const Row(
+                      if (order['status'] == 'pending') ...[
+                        Container()
+                      ] else if (order['status'] != 'ready_to_start') ...[
+                        Row(
                           children: [
                             CircleAvatar(
                               radius: 25,
-                              backgroundImage: AssetImage(
-                                'images/imgs/e.jpg',
+                              backgroundImage: NetworkImage(
+                                order['rider_avatar'],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10,
                             ),
                             Text(
-                              'مزمل بشرى',
+                              order['rider_name'],
                               style: kTextRegular16,
                             ),
                           ],
                         ),
-                        const Row(
+                        Row(
                           children: [
-                            CircleAvatar(
-                              radius: 25,
-                              backgroundColor: kPrimary,
-                              child: Icon(
-                                Icons.call,
-                                color: kWhite,
+                            GestureDetector(
+                              onTap: () {
+                                //rider_phone
+                              },
+                              child: const CircleAvatar(
+                                radius: 25,
+                                backgroundColor: kPrimary,
+                                child: Icon(
+                                  Icons.call,
+                                  color: kWhite,
+                                ),
                               ),
                             ),
-                            SizedBox(width: 10),
-                            CircleAvatar(
+                            const SizedBox(width: 10),
+                            const CircleAvatar(
                               radius: 25,
                               backgroundColor: kPrimary,
                               child: Icon(
@@ -252,6 +248,63 @@ class OrdersItem extends StatelessWidget {
                 ],
               ),
             ),
+          );
+        });
+  }
+}
+
+class TripPath extends StatelessWidget {
+  TripPath({
+    super.key,
+    required this.orderId,
+  });
+  final String orderId;
+  final FirestoreService _firestore = locator<FirestoreService>();
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: _firestore.orderWithId(orderId),
+        builder: (context, snapshot) {
+          if (snapshot.data == null) {
+            return Container();
+          }
+          final order = snapshot.data!;
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      order['location'],
+                      style: kTextRegular16,
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Text(
+                      order['created_at'].toDate().toString(),
+                      style: kTextRegular16,
+                    )
+                  ],
+                ),
+              ),
+              const Expanded(
+                child: Icon(
+                  Icons.arrow_forward,
+                  size: 32,
+                  color: kPrimaryText,
+                ),
+              ),
+              const Expanded(
+                child: Text(
+                  'لم يتم تحديد الوجهة بعد',
+                  style: kTextRegular14,
+                ),
+              ),
+            ],
           );
         });
   }

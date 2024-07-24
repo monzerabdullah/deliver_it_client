@@ -296,15 +296,17 @@ class AcceptedOrderCard extends StatelessWidget {
                     )
                   ],
                 ),
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 42,
-                  backgroundImage: AssetImage('images/imgs/e.jpg'),
+                  backgroundImage: NetworkImage(
+                    riderData['avatarImgUrl'],
+                  ),
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                const Text(
-                  'مزمل بشرى',
+                Text(
+                  riderData['name'],
                   style: kTextMedium16,
                 ),
                 Text(
@@ -323,7 +325,7 @@ class AcceptedOrderCard extends StatelessWidget {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          launchUrlString('tel://01146784805');
+                          launchUrlString('tel://${riderData['phoneNumber']}');
                         },
                         child: Container(
                           alignment: Alignment.center,

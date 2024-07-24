@@ -20,7 +20,7 @@ class _CanceledOrdersState extends State<CanceledOrders> {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: _firestore.canceldOrders(user!.uid),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.data == null) {
           return const Center(
             child: Column(
               children: [

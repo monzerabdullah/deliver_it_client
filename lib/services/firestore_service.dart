@@ -1,13 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:deliver_it_client/locator.dart';
-import 'package:deliver_it_client/services/authentication_service.dart';
+import 'package:deliver_it_client/models/store.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/order_model.dart';
 import '../models/rider_model.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final AuthenticationService _auth = locator<AuthenticationService>();
+  final CollectionReference _stores =
+      FirebaseFirestore.instance.collection('stores');
+
+  Future createStore(Store store) async {
+    try {
+      await _stores.doc(store.id).set(store.toMap());
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future getStore(String storeId) async {
+    try {
+      var storeData = await _stores.doc(storeId).get();
+      return Store.fromFirestore(storeData);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Stream<List<OrderModel>> getOrders(String storeId) {
     return _db
         .collection('orders')

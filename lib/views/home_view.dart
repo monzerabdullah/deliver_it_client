@@ -7,6 +7,8 @@ import 'package:deliver_it_client/widgets/order_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -291,19 +293,6 @@ class AcceptedOrderCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        // PopupMenuItem(
-                        //   value: 'تأكيد',
-                        //   child: const Text(
-                        //     'تأكيد',
-                        //     style: TextStyle(
-                        //       fontFamily: 'Cairo',
-                        //       fontSize: 16.0,
-                        //     ),
-                        //   ),
-                        //   onTap: () {
-                        //     _confirmTrip(order.id);
-                        //   },
-                        // ),
                         if (order['status'] != 'ready_to_start') ...[
                           PopupMenuItem(
                             value: 'إلغاء الرحلة',
@@ -364,16 +353,21 @@ class AcceptedOrderCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
-                      child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(8),
-                        color: kPrimary,
-                        child: const Text(
-                          'إتصال',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 16.0,
-                            color: kWhite,
+                      child: GestureDetector(
+                        onTap: () {
+                          launchUrlString('tel://01146784805');
+                        },
+                        child: Container(
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.all(8),
+                          color: kPrimary,
+                          child: const Text(
+                            'إتصال',
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 16.0,
+                              color: kWhite,
+                            ),
                           ),
                         ),
                       ),

@@ -23,7 +23,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   setupLocator();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -40,8 +40,9 @@ class ClientView extends StatefulWidget {
 
 class _ClientViewState extends State<ClientView> {
   int currentIndex = 0;
-  var user = FirebaseAuth.instance.currentUser;
+
   int readyTostartOrders = 0;
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -93,7 +94,7 @@ class _ClientViewState extends State<ClientView> {
                     ),
                   ],
                 ),
-                drawer: const NavDrawer(),
+                drawer: NavDrawer(),
               );
             }),
       ),
@@ -138,32 +139,33 @@ class _ClientViewState extends State<ClientView> {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+  MyApp({super.key});
+  final AuthenticationService auth = locator<AuthenticationService>();
   @override
   Widget build(BuildContext context) {
     return StreamProvider<User?>.value(
       initialData: null,
-      value: AuthenticationService().user,
+      value: auth.user,
       child: MaterialApp(
         navigatorKey: navigatorKey,
-        home: const Wrapper(),
+        home: Wrapper(),
       ),
     );
   }
 }
 
 class Wrapper extends StatelessWidget {
-  const Wrapper({super.key});
+  Wrapper({super.key});
+  final AuthenticationService _auth = locator<AuthenticationService>();
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
-
-    if (user == null) {
-      return const Authenticate();
-    } else {
+    if (user != null) {
+      _auth.populateCurrentStore(user);
       return const ClientView();
+    } else {
+      return const Authenticate();
     }
   }
 }

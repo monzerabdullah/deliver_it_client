@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deliver_it_client/constants.dart';
+import 'package:deliver_it_client/locator.dart';
+import 'package:deliver_it_client/services/firestore_service.dart';
 import 'package:deliver_it_client/views/details_view.dart';
 import 'package:deliver_it_client/views/tabs/accepted_view.dart';
 import 'package:deliver_it_client/views/tabs/all_view.dart';
@@ -16,6 +18,7 @@ class MyOrders extends StatelessWidget {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
+        backgroundColor: kWhite,
         appBar: AppBar(
           backgroundColor: kWhite,
           toolbarHeight: 10,
@@ -58,7 +61,6 @@ class OrdersItem extends StatelessWidget {
   OrdersItem({super.key, required this.orderId});
   final String orderId;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String chaipLabel(String orderStatus) {
     if (orderStatus == 'pending') {
       return 'في إنتظار القبول';
@@ -95,16 +97,12 @@ class OrdersItem extends StatelessWidget {
     }
   }
 
-  void _confirmTrip(String orderId) async {
-    await _firestore.collection('orders').doc(orderId).update({
-      'status': 'delivering',
-    });
-  }
+  final FirestoreService _firestore = locator<FirestoreService>();
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
-        stream: _firestore.collection('orders').doc(orderId).snapshots(),
+        stream: _firestore.orderWithId(orderId),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Container();
@@ -153,6 +151,7 @@ class OrdersItem extends StatelessWidget {
                   const Divider(),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Expanded(child: LocationSide()),
                       Expanded(
@@ -183,11 +182,7 @@ class OrdersItem extends StatelessWidget {
                             ),
                             Text(
                               'مزمل بشرى',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: kTextRegular16,
                             ),
                           ],
                         ),
@@ -213,53 +208,41 @@ class OrdersItem extends StatelessWidget {
                           ],
                         ),
                       ] else ...[
-                        ElevatedButton(
-                          onPressed: () {
-                            // Navigator.of(context).push(
-                            //   MaterialPageRoute(
-                            //     builder: (context) =>
-                            //         DetailsView(orderId: order.id),
-                            //   ),
-                            // );
-                            _confirmTrip(order.id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kPrimary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                          child: const Text(
-                            'تأكيد',
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              color: kWhite,
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              _firestore.confirmTrip(order.id);
+                            },
+                            style: kMainButton,
+                            child: const Text(
+                              'تأكيد',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                color: kWhite,
+                              ),
                             ),
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DetailsView(orderId: order.id),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: kWhite,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                              side: const BorderSide(
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DetailsView(orderId: order.id),
+                                ),
+                              );
+                            },
+                            style: kSecondaryButton,
+                            child: const Text(
+                              'التفاصيل',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
                                 color: kPrimary,
                               ),
-                            ),
-                          ),
-                          child: const Text(
-                            'التفاصيل',
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              color: kPrimary,
                             ),
                           ),
                         ),
@@ -286,22 +269,14 @@ class LocationSide extends StatelessWidget {
       children: [
         Text(
           'أكتوبر الحي التاني',
-          style: TextStyle(
-            color: kPrimaryText,
-            fontFamily: 'Cairo',
-            fontSize: 16,
-          ),
+          style: kTextRegular16,
         ),
         SizedBox(
           height: 12,
         ),
         Text(
           '22 يونيو ، 2024 ،  PM 8:04',
-          style: TextStyle(
-            color: kSecondaryText,
-            fontFamily: 'Cairo',
-            fontSize: 16,
-          ),
+          style: kTextRegular16,
         )
       ],
     );

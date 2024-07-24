@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:deliver_it_client/constants.dart';
 import 'package:deliver_it_client/locator.dart';
 import 'package:deliver_it_client/services/authentication_service.dart';
+import 'package:deliver_it_client/services/firestore_service.dart';
 import 'package:deliver_it_client/services/notification_service.dart';
 import 'package:deliver_it_client/views/authenticate.dart';
 import 'package:deliver_it_client/views/home_view.dart';
@@ -43,6 +44,7 @@ class _ClientViewState extends State<ClientView> {
 
   int readyTostartOrders = 0;
   final user = FirebaseAuth.instance.currentUser;
+  final FirestoreService _firestore = locator<FirestoreService>();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -51,16 +53,13 @@ class _ClientViewState extends State<ClientView> {
       home: Directionality(
         textDirection: TextDirection.rtl,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: FirebaseFirestore.instance
-                .collection('orders')
-                .where('store_id', isEqualTo: user?.uid)
-                .where('status', isEqualTo: 'ready_to_start')
-                .snapshots(),
+            stream: _firestore.readyToStartOrders(user!.uid),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 readyTostartOrders = snapshot.data!.docs.length;
               }
               return Scaffold(
+                backgroundColor: kWhite,
                 appBar: AppBar(
                   elevation: 4.0,
                   backgroundColor: kWhite,

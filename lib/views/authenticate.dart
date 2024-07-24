@@ -11,7 +11,6 @@ class Authenticate extends StatefulWidget {
 
 class _AuthenticateState extends State<Authenticate> {
   bool showSignIn = false;
-  final String _role = 'store'; // or 'rider'
 
   void toggleView() {
     setState(() {
@@ -30,18 +29,3 @@ class _AuthenticateState extends State<Authenticate> {
           );
   }
 }
-
-
-
-
-
-    // Store additional user data in Firestore
-  //   FirebaseFirestore.instance
-  //       .collection(role)
-  //       .doc(userCredential.user!.uid)
-  //       .set({
-  //     'email' = _email,
-  //     'role' = _role,
-  //   });
-  // }
-

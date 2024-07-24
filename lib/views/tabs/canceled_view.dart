@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:deliver_it_client/locator.dart';
+import 'package:deliver_it_client/services/firestore_service.dart';
 import 'package:deliver_it_client/views/orders_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +14,11 @@ class CanceledOrders extends StatefulWidget {
 
 class _CanceledOrdersState extends State<CanceledOrders> {
   final user = FirebaseAuth.instance.currentUser;
+  final FirestoreService _firestore = locator<FirestoreService>();
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('store_id', isEqualTo: user?.uid)
-          .where('status', isEqualTo: 'canceled')
-          .snapshots(),
+      stream: _firestore.canceldOrders(user!.uid),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return const Center(

@@ -49,11 +49,7 @@ class NavDrawer extends StatelessWidget {
             ),
             title: Text(
               'سجل الطلبيات',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                color: kPrimaryText,
-                fontSize: 20.0,
-              ),
+              style: kTextRegular22,
             ),
           ),
           const SizedBox(
@@ -67,11 +63,7 @@ class NavDrawer extends StatelessWidget {
             ),
             title: Text(
               'المساعدة والدعم',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                color: kPrimaryText,
-                fontSize: 20.0,
-              ),
+              style: kTextRegular22,
             ),
           ),
           const SizedBox(
@@ -91,11 +83,7 @@ class NavDrawer extends StatelessWidget {
               ),
               title: const Text(
                 'تسجيل خروج',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  color: kPrimaryText,
-                  fontSize: 20.0,
-                ),
+                style: kTextRegular22,
               ),
             ),
           ),

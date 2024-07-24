@@ -35,7 +35,7 @@ class _SignUpViewState extends State<SignUpView> {
             ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 2,
+                maxHeight: MediaQuery.of(context).size.height * 1.5,
               ),
               child: Form(
                 child: Column(
@@ -45,11 +45,7 @@ class _SignUpViewState extends State<SignUpView> {
                       children: [
                         Text(
                           'أنشيء حسابك',
-                          style: TextStyle(
-                            color: kPrimaryText,
-                            fontSize: 32.0,
-                            fontFamily: 'Cairo',
-                          ),
+                          style: kTextRegular32,
                         ),
                       ],
                     ),
@@ -62,11 +58,7 @@ class _SignUpViewState extends State<SignUpView> {
                         Expanded(
                           child: Text(
                             'قم بإنشاء حساب ، وقم بإيصال الطلبات!!',
-                            style: TextStyle(
-                              color: kSecondaryText,
-                              fontSize: 16.0,
-                              fontFamily: 'Cairo',
-                            ),
+                            style: kTextRegular16,
                           ),
                         ),
                       ],
@@ -185,34 +177,12 @@ class _SignUpViewState extends State<SignUpView> {
                           location: locationController.text,
                         );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kPrimary,
-                        textStyle: const TextStyle(
-                          fontSize: 20.0,
-                          fontFamily: 'Cairo',
-                          fontWeight: FontWeight.w600,
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 22,
-                          vertical: 16,
-                        ),
-                        minimumSize: const Size.fromHeight(60),
-                      ),
+                      style: kMainButton,
                       child: const Text(
                         'أنشيء حسابك',
                       ),
                     ),
 
-                    // BusyButton(
-                    //   title: 'أنشيء حسابك',
-                    //   busy: model.busy,
-                    //   onPressed: () async {
-                    //     await model.signUp(
-                    //         email: emailController.text,
-                    //         password: passwordController.text);
-                    //     // model.setBusy(false);
-                    //   },
-                    // ),
                     const SizedBox(
                       height: 24,
                     ),

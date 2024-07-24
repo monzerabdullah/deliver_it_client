@@ -18,12 +18,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirestoreService _firestore = locator<FirestoreService>();
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   // final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
   //     FlutterLocalNotificationsPlugin();
   late NotificationService _notificationService;
+
+  final user = FirebaseAuth.instance.currentUser;
+  final FirestoreService _firestore = locator<FirestoreService>();
 
   @override
   void initState() {
@@ -34,151 +34,139 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.grey[100],
         body: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('orders')
-                .where('store_id', isEqualTo: user?.uid)
-                .where(
-              'status',
-              whereIn: [
-                'pending',
-                'accepted',
-                'ready_to_start',
-                'delivering',
-              ],
-            ).snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const CustomScrollView(
-                  slivers: [
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 60,
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Column(
-                        children: [
-                          Text(
-                            'لا توجد طلبات حتى الان',
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              color: kPrimaryText,
-                              fontSize: 16,
-                            ),
-                          ),
-                          SizedBox(
-                            height: 40,
-                          )
-                        ],
-                      ),
-                    ),
-                  ],
-                );
-                // Check if snapshot has data
-              }
-              final orders = snapshot.data!.docs;
-              // Check if there are no orders
-              final pendingOrders = orders
-                  .where(
-                    (order) => order['status'] == 'pending',
-                  )
-                  .length;
-              var ordersCards = orders
-                  .where(
-                    (order) => order['status'] != 'pending',
-                  )
-                  .toList();
-
-              return CustomScrollView(
+          stream: _firestore.activeOrders(user!.uid),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const CustomScrollView(
                 slivers: [
-                  const SliverToBoxAdapter(
+                  SliverToBoxAdapter(
                     child: SizedBox(
                       height: 60,
                     ),
                   ),
-                  SliverGrid(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 0.75, // Adjust as needed
-                    ),
-                    // padding: const EdgeInsets.all(10),
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final order = ordersCards[index];
-                        return AcceptedOrderCard(order: order);
-                      },
-                      childCount: ordersCards.length,
-                    ),
-                  ),
                   SliverToBoxAdapter(
-                    child: OrderButton(
-                      onTap: () {
-                        _firestore.createOrder(user);
-                      },
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: Card(
-                      color: kPrimaryText,
-                      child: ListTile(
-                        title: const Text(
-                          'عدد الطلبات',
+                    child: Column(
+                      children: [
+                        Text(
+                          'لا توجد طلبات حتى الان',
                           style: TextStyle(
                             fontFamily: 'Cairo',
-                            color: kWhite,
+                            color: kPrimaryText,
                             fontSize: 16,
-                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const CircleAvatar(
-                              backgroundColor: kPrimary,
-                              child: Icon(
-                                Icons.add,
-                                color: kWhite,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            Text(
-                              pendingOrders.toString(),
-                              style: const TextStyle(
-                                fontFamily: 'Cairo',
-                                color: kWhite,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            const CircleAvatar(
-                              backgroundColor: kPrimary,
-                              child: Icon(
-                                Icons.remove,
-                                color: kWhite,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                        SizedBox(
+                          height: 40,
+                        )
+                      ],
                     ),
                   ),
                 ],
               );
-            }),
+              // Check if snapshot has data
+            }
+            final orders = snapshot.data!.docs;
+            // Check if there are no orders
+            final pendingOrders = orders
+                .where(
+                  (order) => order['status'] == 'pending',
+                )
+                .length;
+            var ordersCards = orders
+                .where(
+                  (order) => order['status'] != 'pending',
+                )
+                .toList();
+
+            return CustomScrollView(
+              slivers: [
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 60,
+                  ),
+                ),
+                SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 10.0,
+                    childAspectRatio: 0.75, // Adjust as needed
+                  ),
+                  // padding: const EdgeInsets.all(10),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final order = ordersCards[index];
+                      return AcceptedOrderCard(order: order);
+                    },
+                    childCount: ordersCards.length,
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: OrderButton(
+                    onTap: () {
+                      _firestore.createOrder(user);
+                    },
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Card(
+                    color: kPrimaryText,
+                    child: ListTile(
+                      title: const Text(
+                        'عدد الطلبات',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          color: kWhite,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const CircleAvatar(
+                            backgroundColor: kPrimary,
+                            child: Icon(
+                              Icons.add,
+                              color: kWhite,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            pendingOrders.toString(),
+                            style: const TextStyle(
+                              fontFamily: 'Cairo',
+                              color: kWhite,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const CircleAvatar(
+                            backgroundColor: kPrimary,
+                            child: Icon(
+                              Icons.remove,
+                              color: kWhite,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -205,18 +193,7 @@ class AcceptedOrderCard extends StatelessWidget {
     }
   }
 
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  Future<void> _cancelOrder(String orderId) async {
-    await _firebaseFirestore.collection('orders').doc(orderId).update({
-      'status': 'canceled',
-    });
-  }
-
-  void _confirmTrip(String orderId) async {
-    await _firebaseFirestore.collection('orders').doc(orderId).update({
-      'status': 'delivering',
-    });
-  }
+  final FirestoreService _firestore = locator<FirestoreService>();
 
   @override
   Widget build(BuildContext context) {
@@ -245,9 +222,6 @@ class AcceptedOrderCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // const SizedBox(
-                //   height: 8,
-                // ),
                 Row(
                   children: [
                     PopupMenuButton(
@@ -266,7 +240,7 @@ class AcceptedOrderCard extends StatelessWidget {
                               ),
                             ),
                             onTap: () {
-                              _confirmTrip(order.id);
+                              _firestore.confirmTrip(order.id);
                             },
                           ),
                           PopupMenuItem(
@@ -279,7 +253,7 @@ class AcceptedOrderCard extends StatelessWidget {
                               ),
                             ),
                             onTap: () {
-                              _cancelOrder(order.id);
+                              _firestore.cancelOrder(order.id);
                             },
                           ),
                           const PopupMenuItem(
@@ -304,7 +278,7 @@ class AcceptedOrderCard extends StatelessWidget {
                               ),
                             ),
                             onTap: () {
-                              _cancelOrder(order.id);
+                              _firestore.cancelOrder(order.id);
                             },
                           ),
                           const PopupMenuItem(
@@ -331,12 +305,7 @@ class AcceptedOrderCard extends StatelessWidget {
                 ),
                 const Text(
                   'مزمل بشرى',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: kPrimaryText,
-                  ),
+                  style: kTextMedium16,
                 ),
                 Text(
                   orderLabel(order['status']),
@@ -348,7 +317,6 @@ class AcceptedOrderCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -399,8 +367,8 @@ class AcceptedOrderCard extends StatelessWidget {
 }
 
 class StoreReviewTripScreen extends StatelessWidget {
-  StoreReviewTripScreen({super.key, required this.payload});
-  String payload;
+  const StoreReviewTripScreen({super.key, required this.payload});
+  final String payload;
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -427,12 +395,7 @@ class StoreReviewTripScreen extends StatelessWidget {
                   const Text(
                     'تم التوصيل!!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: kPrimaryText,
-                    ),
+                    style: kTextBold32,
                   ),
                   const SizedBox(
                     height: 30,
@@ -477,16 +440,13 @@ class StoreReviewTripScreen extends StatelessWidget {
                   const Text(
                     'قم بتقييم تجرتك مع هذا المندوب ، ما الذي أعجبك ، ما الذي بجب تحسينه والإهتمام به',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 16,
-                      color: kSecondaryText,
-                    ),
+                    style: kTextRegular16,
                   ),
                   const SizedBox(
                     height: 30,
                   ),
                   ElevatedButton(
+                    style: kMainButton,
                     onPressed: () {
                       //show dialog here
                     },
@@ -499,6 +459,7 @@ class StoreReviewTripScreen extends StatelessWidget {
                     height: 20,
                   ),
                   ElevatedButton(
+                    style: kSecondaryButton,
                     onPressed: () {
                       Navigator.pop(context);
                     },
